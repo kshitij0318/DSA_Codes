@@ -1,0 +1,154 @@
+#include <iostream>
+using namespace std;
+struct node
+{
+    int data;
+    struct node *next;
+};
+void printLinkedList(struct node *p)
+{
+    while (p != NULL)
+    {
+        cout << p->data << endl;
+        p = p->next;
+    }
+}
+struct node *insertStart(struct node *head, int data)
+{
+    struct node *ptr2 = new node;
+    ptr2->data = data;
+    ptr2->next = head;
+    return ptr2; 
+}
+struct node *insertEnd(struct node *head, int data)
+{
+    struct node *newNode = new node;
+    newNode->data = data;
+    newNode->next = NULL;
+    if (head == NULL)
+    {
+        return newNode;
+    }
+    struct node *current = head;
+    while (current->next != NULL)
+    {
+        current = current->next;
+    }
+    current->next = newNode;
+    return head;
+}
+struct node *insertRandom(struct node *head, int data, int position)
+{
+    struct node *newNode = new node;
+    newNode->data = data;
+    newNode->next = NULL;
+    if (position == 0)
+    {
+        newNode->next = head;
+        return newNode;
+    }
+    struct node *current = head;
+    for (int i = 0; i < position - 1 && current != NULL; i++)
+    {
+        current = current->next;
+    }
+    if (current == NULL)
+    {
+        cout << "Position out of range." << endl;
+        return head;
+    }
+    newNode->next = current->next;
+    current->next = newNode;
+    return head;
+}
+struct node *deleteBegin(struct node *head)
+{
+    if (head == NULL)
+    {
+        cout << "List is empty. Cannot delete." << endl;
+        return NULL;
+    }
+    struct node *temp = head;
+    head = head->next;
+    delete temp;
+    return head;
+}
+struct node *deleteLast(struct node *head)
+{
+    if (head == NULL)
+    {
+        cout << "List is empty. Cannot delete." << endl;
+        return NULL;
+    }
+    if (head->next == NULL)
+    {
+        delete head;
+        return NULL;
+    }
+    struct node *current = head;
+    while (current->next->next != NULL)
+    {
+        current = current->next;
+    }
+    delete current->next;
+    current->next = NULL;
+    return head;
+}
+struct node *deleteRandom(struct node *head, int position)
+{
+    if (head == NULL)
+    {
+        cout << "List is empty. Cannot delete." << endl;
+        return NULL;
+    }
+    if (position == 0)
+    {
+        struct node *temp = head;
+        head = head->next;
+        delete temp;
+        return head;
+    }
+    struct node *current = head;
+    for (int i = 0; i < position - 1 && current != NULL; i++)
+    {
+        current = current->next;
+    }
+    if (current == NULL || current->next == NULL)
+    {
+        cout << "Position out of range." << endl;
+        return head;
+    }
+    struct node *temp = current->next;
+    current->next = temp->next;
+    delete temp;
+    return head;
+}
+int main()
+{
+    struct node *head = new node;
+    head->data = 45;
+    head->next = NULL;
+    struct node *ptr = new node;
+    ptr->data = 98;
+    ptr->next = NULL;
+    struct node *ptr1 = new node;
+    ptr1->data = 3;
+    ptr1->next = NULL;
+    head->next = ptr;
+    ptr->next = ptr1;
+    head = insertStart(head, 5);
+    head = insertEnd(head, 55); 
+    head = insertEnd(head, 99);
+    head = insertRandom(head, 77, 2); 
+    head = insertRandom(head, 101, 4);
+    printf("----------------------------------------------------\n");
+    cout << "Linked List after insertions:" << endl;
+    printLinkedList(head);
+    head = deleteBegin(head); 
+    head = deleteLast(head);  
+    head = deleteRandom(head, 2); 
+    printf("-------------------------------------------------\n.");
+    cout << "Linked List after deletions:" << endl;
+    printLinkedList(head);
+    return 0;
+}
