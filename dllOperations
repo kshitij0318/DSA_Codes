@@ -1,0 +1,231 @@
+#include <iostream>
+#include <cstdlib>
+#include <ctime>
+struct Node {
+    int data;
+    Node* next;
+    Node* prev;
+};
+Node* createNode(int data) {
+    Node* newNode = new Node;
+    newNode->data = data;
+    newNode->next = nullptr;
+    newNode->prev = nullptr;
+    return newNode;
+}
+Node* createDLL() {
+    Node* head = nullptr;
+    Node* tail = nullptr;
+    for (int i = 1; i <= 10; i++) {
+        Node* newNode = createNode(i);
+        if (head == nullptr) {
+            head = newNode;
+            tail = newNode;
+        } else {
+            tail->next = newNode;
+            newNode->prev = tail;
+            tail = newNode;
+        }
+    }
+    return head;
+}
+void displayDLLForward(Node* head) {
+    Node* current = head;
+    while (current != nullptr) {
+        std::cout << current->data << " ";
+        current = current->next;
+    }
+    std::cout << std::endl;
+}
+void displayDLLBackward(Node* tail) {
+    Node* current = tail;
+    while (current != nullptr) {
+        std::cout << current->data << " ";
+        current = current->prev;
+    }
+    std::cout << std::endl;
+}
+void traverseDLL(Node* head) {
+    Node* current = head;
+    while (current != nullptr) {
+        std::cout << current->data << " ";
+        current = current->next;
+    }
+    std::cout << std::endl;
+}
+Node* addNodeAtBeginning(Node* head, int data) {
+    Node* newNode = createNode(data);
+    newNode->next = head;
+    if (head != nullptr) {
+        head->prev = newNode;
+    }
+    return newNode;
+}
+Node* addNodeAtRandomPosition(Node* head, int data, int position) {
+    Node* newNode = createNode(data);
+    if (position == 1) {
+        newNode->next = head;
+        if (head != nullptr) {
+            head->prev = newNode;
+        }
+        return newNode;
+    }
+    Node* current = head;
+    int currentPosition = 1;
+    while (currentPosition < position - 1 && current != nullptr) {
+        current = current->next;
+        currentPosition++;
+    }
+    if (current != nullptr) {
+        newNode->next = current->next;
+        newNode->prev = current;
+        if (current->next != nullptr) {
+            current->next->prev = newNode;
+        }
+        current->next = newNode;
+    }
+    return head;
+}
+Node* addNodeAtLast(Node* head, int data) {
+    Node* newNode = createNode(data);
+    Node* current = head;
+    while (current != nullptr && current->next != nullptr) {
+        current = current->next;
+    }
+    if (current != nullptr) {
+        current->next = newNode;
+        newNode->prev = current;
+    }
+    return head;
+}
+Node* deleteNodeAtBeginning(Node* head) {
+    if (head == nullptr) {
+        return nullptr;
+    }
+    Node* newHead = head->next;
+    delete head;
+    if (newHead != nullptr) {
+        newHead->prev = nullptr;
+    }
+    return newHead;
+}
+Node* deleteNodeAtRandomPosition(Node* head, int position) {
+    if (head == nullptr) {
+        return nullptr;
+    }
+    if (position == 1) {
+        Node* newHead = head->next;
+        delete head;
+        if (newHead != nullptr) {
+            newHead->prev = nullptr;
+        }
+        return newHead;
+    }
+    Node* current = head;
+    int currentPosition = 1;
+    while (currentPosition < position && current != nullptr) {
+        current = current->next;
+        currentPosition++;
+    }
+    if (current != nullptr) {
+        Node* prevNode = current->prev;
+        Node* nextNode = current->next;
+        delete current;
+        if (prevNode != nullptr) {
+            prevNode->next = nextNode;
+        }
+        if (nextNode != nullptr) {
+            nextNode->prev = prevNode;
+        }
+    }
+    return head;
+}
+Node* deleteNodeAtLast(Node* head) {
+    if (head == nullptr) {
+        return nullptr;
+    }
+    if (head->next == nullptr) {
+        delete head;
+        return nullptr;
+    }
+    Node* current = head;
+    while (current->next != nullptr) {
+        current = current->next;
+    }
+    Node* prevNode = current->prev;
+    delete current;
+    if (prevNode != nullptr) {
+        prevNode->next = nullptr;
+    }
+    return head;
+}
+int main() {
+    Node* dll = createDLL();
+    std::cout << "DLL forward: ";
+    displayDLLForward(dll);
+    std::cout << "DLL backward: ";
+    displayDLLBackward(dll);
+    std::cout << "DLL traversal: ";
+    traverseDLL(dll);
+    int choice;
+    int data, position;
+    do {
+        std::cout << "Choose an operation:\n";
+        std::cout << "1. Add node at the beginning\n";
+        std::cout << "2. Add node at a random position\n";
+        std::cout << "3. Add node at the last position\n";
+        std::cout << "4. Delete node at the beginning\n";
+        std::cout << "5. Delete node at a random position\n";
+        std::cout << "6. Delete last node\n";
+        std::cout << "0. Exit\n";
+        std::cin >> choice;
+        switch (choice) {
+            case 1:
+                std::cout << "Enter data to add at the beginning: ";
+                std::cin >> data;
+                dll = addNodeAtBeginning(dll, data);
+                break;
+            case 2:
+                std::cout << "Enter data to add: ";
+                std::cin >> data;
+                std::cout << "Enter position to add at: ";
+                std::cin >> position;
+                dll = addNodeAtRandomPosition(dll, data, position);
+                break;
+            case 3:
+                std::cout << "Enter data to add at the last position: ";
+                std::cin >> data;
+                dll = addNodeAtLast(dll, data);
+                break;
+            case 4:
+                dll = deleteNodeAtBeginning(dll);
+                break;
+            case 5:
+                std::cout << "Enter position to delete: ";
+                std::cin >> position;
+                dll = deleteNodeAtRandomPosition(dll, position);
+                break;
+            case 6:
+                dll = deleteNodeAtLast(dll);
+                break;
+            case 0:
+                break;
+            default:
+                std::cout << "Invalid choice. Try again.\n";
+                break;
+        }
+        std::cout << "DLL forward: ";
+        displayDLLForward(dll);
+        std::cout << "DLL backward: ";
+        displayDLLBackward(dll);
+        std::cout << "DLL traversal: ";
+        traverseDLL(dll);
+    } while (choice != 0);
+    Node* current = dll;
+    while (current != nullptr) {
+        Node* temp = current;
+        current = current->next;
+        delete temp;
+    }
+    return 0;
+}
